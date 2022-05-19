@@ -11,44 +11,9 @@ class Item:
          self.comments = comments
     def __str__(self):
         return 'Name: '+self.name+' | Cost: '+self.cost
-    
-#list to store inventory
-items = []        
-old = input("Would you like to load previous data? (y\\n)")
-if old == 'y':
-    path = input("Enter path to csv file (with extension): ")
-    
-    #open the entered file
-    try:
-        data = open(path, 'r')
-        reader = csv.reader(data)
-        #skip header line
-        next(reader)
-        #extract all items from provided file
-        for item in reader:
-            if item == []:
-                break
-        
-            thing = Item(item[0], item[1], item[2], item[3])
-            items.append(thing)
-        data.close()
 
-    except FileNotFoundError:
-        print('Could not find file named \"' + path +'\". Proceeding without loading data.')
-
-
-path = ''   
-#only accept .csv file names
-while path[-4:] != '.csv':
-    path = input("Enter output csv file name (with extension): ")
-
- 
-with open(path,'w', newline='') as file:
-    writer = csv.writer(file)
-    header = ['name', 'cost', 'deleted', 'comments']
-    writer.writerow(header)
-
-#main loop
+#function takes in item list, takes and execute commands from the user
+def main_loop(items):
     going = True
     while going:
         action = input('Enter \"display\" to display inventory list, \"delete\" to delete an item, \"add\" to add an item, \"edit\" to edit an item,\"removed\" to view deleted items and their comments, or \"stop\" to exit the app: ')
@@ -121,12 +86,58 @@ with open(path,'w', newline='') as file:
         else:
             print("Please enter a valid command.\n")
 
-    for item in items:
-        row = [item.name, item.cost, item.deleted, item.comments]
-        writer.writerow(row)
+            
+#list to store inventory
+items = []        
+old = input("Would you like to load previous data? (y\\n)")
+if old == 'y':
+    path = input("Enter path to csv file (with extension): ")
+    
+    #open the entered file
+    try:
+        data = open(path, 'r')
+        reader = csv.reader(data)
+        #skip header line
+        next(reader)
+        #extract all items from provided file
+        for item in reader:
+            if item == []:
+                break
+        
+            thing = Item(item[0], item[1], item[2], item[3])
+            items.append(thing)
+        data.close()
+
+    except FileNotFoundError:
+        print('Could not find file named \"' + path +'\". Proceeding without loading data.')
 
 
+path = ''   
+#only accept .csv file names
+export = input("Save information to a file? (y/n)")
+if export == 'y':
+    while path[-4:] != '.csv':
+        path = input("Enter output csv file name (with extension): ")
 
-file.close()
+     
+    with open(path,'w', newline='') as file:
+        writer = csv.writer(file)
+        header = ['name', 'cost', 'deleted', 'comments']
+        writer.writerow(header)
+
+#main loop
+    main_loop(items)
+    if export == 'y':
+        for item in items:
+            row = [item.name, item.cost, item.deleted, item.comments]
+            writer.writerow(row)
+#not saving information to file
+else:
+    print('here')
+    main_loop(items)
+
+
+if export == 'y':
+    file.close()
 
 
